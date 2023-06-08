@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { AuthService } from './service/auth.service';
 
 
 
@@ -7,6 +8,13 @@ import { CommonModule } from '@angular/common';
   declarations: [],
   imports: [
     CommonModule
-  ]
+  ],
+  providers:[AuthService]
 })
-export class CoreModule { }
+export class CoreModule { 
+
+  constructor(){
+
+  } 
+
+}
