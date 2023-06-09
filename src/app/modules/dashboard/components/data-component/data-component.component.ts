@@ -16,6 +16,14 @@ export class DataComponentComponent {
   Estados: any = Estado;
   contador = 0;
   estado = '';
+  MaxDeath = {
+    muertes:0,
+    nameState:''
+  };
+  MinDeath = {
+    muertes: Infinity, // o puedes usar un número muy bajo como -Infinity
+    nameState: ''
+  };
 
   constructor(private data: CheckDataService) {}
 
@@ -42,9 +50,30 @@ export class DataComponentComponent {
           }
         });
       });
-    
+
       console.log(this.Estados);
       console.log(this.ExcelData);
+
+      this.identifyState();
     };
+  }
+
+  identifyState() {
+    stateNames.forEach((state) => {
+      this.Estados.forEach((data:any) => {
+        if (data.hasOwnProperty(state)) {
+          if(data[state].muertes>this.MaxDeath.muertes){
+            this.MaxDeath.muertes=data[state].muertes;
+            this.MaxDeath.nameState=state;
+          }
+          if (data[state].muertes < this.MinDeath.muertes) {
+            this.MinDeath.muertes = data[state].muertes;
+            this.MinDeath.nameState = state;
+          } 
+        }
+      });
+    })
+    console.log(this.MaxDeath)
+    console.log(this.MinDeath)
   }
 }

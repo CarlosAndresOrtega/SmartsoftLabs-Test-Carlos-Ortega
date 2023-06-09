@@ -4,6 +4,7 @@ import { HeaderComponent } from './components/header/header.component';
 import { DashboardRoutingModule } from './dashboard.routes.module';
 import { DataComponentComponent } from './components/data-component/data-component.component';
 import { SharedModule } from '../shared/shared.module';
+import { FormsModule } from '@angular/forms';
 
 
 
@@ -16,7 +17,8 @@ import { SharedModule } from '../shared/shared.module';
   imports: [
     DashboardRoutingModule,
     CommonModule,
-    SharedModule
+    SharedModule,
+    FormsModule
   ]
 })
 export class DashboardModule { }
