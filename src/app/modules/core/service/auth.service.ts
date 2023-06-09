@@ -35,10 +35,8 @@ export class AuthService {
 
   isLoggedIn(): boolean {
     if(localStorage.getItem(this.localStorageKey)){
-      console.log("Tiene Localstorage")
       return true
     }else{
-      console.log("No tiene Localstorage")
       return false
     }
   }
