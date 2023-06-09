@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { Estado } from 'src/app/modules/shared/models/estados.interface';
+import { stateNames } from 'src/app/modules/shared/models/estados.interface';
 import { CheckDataService } from 'src/app/modules/shared/services/checkData/check-data.service';
 import * as XLSX from 'xlsx';
 
@@ -11,9 +13,9 @@ export class DataComponentComponent {
   ExcelData: Array<any> = [];
   convertedJson!: string;
 
-  Estados: any = [];
+  Estados: any = Estado;
   contador = 0;
-  estado='';
+  estado = '';
 
   constructor(private data: CheckDataService) {}
 
@@ -28,28 +30,21 @@ export class DataComponentComponent {
       var sheetNames = workBook.SheetNames;
       this.ExcelData = XLSX.utils.sheet_to_json(workBook.Sheets[sheetNames[0]]);
 
-      for (let i = 0; i < this.ExcelData.length - 1; i++) {
-        // console.log(i+' '+this.ExcelData[i]['4/26/21'])
-        if (this.ExcelData[i].Province_State == undefined) {
-          console.log('Entrando');
-          this.contador += 0;
-        } else if (
-          this.ExcelData[i].Province_State ==
-          this.ExcelData[i + 1].Province_State
-        ) {
-          this.contador+=parseInt(this.ExcelData[i]['4/26/21']) 
-        }
-      }
-      // this.Estados.push(nuevoObjeto);
-      // const nuevoObjeto = {
-      //   [this.ExcelData[0].Province_State]:
-      //     parseInt(this.ExcelData[0]['4/26/21']) +
-      //     parseInt(this.ExcelData[0 + 1]['4/26/21']),
-      // };
-
-      console.log(this.contador);
+      this.ExcelData.forEach((item) => {
+        stateNames.forEach((state) => {
+          if (item.Province_State == state) {
+            this.Estados.forEach((es: any) => {
+              if (es.hasOwnProperty(state)) {
+                es[`${state}`].muertes += item['4/26/21'];
+                es[`${state}`].poblacion += item.Population;
+              }
+            });
+          }
+        });
+      });
+    
       console.log(this.Estados);
-      console.log(this.ExcelData.length);
+      console.log(this.ExcelData);
     };
   }
 }
