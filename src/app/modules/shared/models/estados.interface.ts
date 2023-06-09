@@ -38,6 +38,7 @@ export const stateNames = [
     "Oklahoma",
     "Oregon",
     "Pennsylvania",
+    "Puerto Rico",
     "Rhode Island",
     "South Carolina",
     "South Dakota",
@@ -51,9 +52,11 @@ export const stateNames = [
     "Wisconsin",
     "Wyoming"
 ];
-export const Estado = stateNames.map((state) => ({
+export const States = stateNames.map((state) => ({
     [state]: {
-        muertes: 0,
-        poblacion: 0
+        deaths: 0,
+        population: 0,
+        MortalityRate:0,
+        percentagePopulation:0
     }
 }));

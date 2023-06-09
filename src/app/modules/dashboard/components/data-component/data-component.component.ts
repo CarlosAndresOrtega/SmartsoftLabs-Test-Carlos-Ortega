@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Estado } from 'src/app/modules/shared/models/estados.interface';
+import { States } from 'src/app/modules/shared/models/estados.interface';
 import { stateNames } from 'src/app/modules/shared/models/estados.interface';
 import { CheckDataService } from 'src/app/modules/shared/services/checkData/check-data.service';
 import * as XLSX from 'xlsx';
@@ -13,16 +13,23 @@ export class DataComponentComponent {
   ExcelData: Array<any> = [];
   convertedJson!: string;
 
-  Estados: any = Estado;
-  contador = 0;
-  estado = '';
-  MaxDeath = {
-    muertes:0,
-    nameState:''
+  States: any = States;
+
+  totalPopulation = 0;
+  totalDeaths = 0;
+  percentageTotalDeaths = 0;
+
+  MaxDeaths = {
+    deaths: 0,
+    nameState: '',
   };
-  MinDeath = {
-    muertes: Infinity, // o puedes usar un número muy bajo como -Infinity
-    nameState: ''
+  MinDeaths = {
+    deaths: Infinity, // o puedes usar un número muy bajo como -Infinity
+    nameState: '',
+  };
+  MostAffected = {
+    percentage: 0,
+    nameState: '',
   };
 
   constructor(private data: CheckDataService) {}
@@ -41,17 +48,41 @@ export class DataComponentComponent {
       this.ExcelData.forEach((item) => {
         stateNames.forEach((state) => {
           if (item.Province_State == state) {
-            this.Estados.forEach((es: any) => {
+            this.States.forEach((es: any) => {
               if (es.hasOwnProperty(state)) {
-                es[`${state}`].muertes += item['4/26/21'];
-                es[`${state}`].poblacion += item.Population;
+                es[`${state}`].deaths += item['4/26/21'];
+                es[`${state}`].population += item.Population;
               }
             });
           }
         });
       });
 
-      console.log(this.Estados);
+      stateNames.forEach((state) => {
+        this.States.forEach((data: any) => {
+          if (data.hasOwnProperty(state)) {
+            this.totalPopulation += data[state].population;
+            this.totalDeaths += data[state].deaths;
+          }
+        });
+      });
+
+      this.States.forEach((es: any) => {
+        stateNames.forEach((state) => {
+          if (es.hasOwnProperty(state)) {
+            es[state].MortalityRate =
+              (es[state].deaths / es[state].population) * 1000;
+            es[state].percentagePopulation =
+              (es[state].population / this.totalPopulation) * 100;
+          }
+        });
+      });
+
+      this.percentageTotalDeaths = (this.totalDeaths / this.totalPopulation) * 100;
+
+      console.log('Porcentaje total de muertes:',this.percentageTotalDeaths);
+      console.log(this.States);
+      console.log(this.totalPopulation);
       console.log(this.ExcelData);
 
       this.identifyState();
@@ -60,20 +91,25 @@ export class DataComponentComponent {
 
   identifyState() {
     stateNames.forEach((state) => {
-      this.Estados.forEach((data:any) => {
+      this.States.forEach((data: any) => {
         if (data.hasOwnProperty(state)) {
-          if(data[state].muertes>this.MaxDeath.muertes){
-            this.MaxDeath.muertes=data[state].muertes;
-            this.MaxDeath.nameState=state;
+          if (data[state].deaths > this.MaxDeaths.deaths) {
+            this.MaxDeaths.deaths = data[state].deaths;
+            this.MaxDeaths.nameState = state;
           }
-          if (data[state].muertes < this.MinDeath.muertes) {
-            this.MinDeath.muertes = data[state].muertes;
-            this.MinDeath.nameState = state;
-          } 
+          if (data[state].deaths < this.MinDeaths.deaths) {
+            this.MinDeaths.deaths = data[state].deaths;
+            this.MinDeaths.nameState = state;
+          }
+          if (data[state].percentage > this.MostAffected.percentage) {
+            this.MostAffected.percentage = data[state].percentage;
+            this.MostAffected.nameState = state;
+          }
         }
       });
-    })
-    console.log(this.MaxDeath)
-    console.log(this.MinDeath)
+    });
+    console.log(this.MaxDeaths);
+    console.log(this.MinDeaths);
+    console.log(this.MostAffected);
   }
 }
