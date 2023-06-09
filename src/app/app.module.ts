@@ -22,7 +22,7 @@ import { PruebaComponent } from './components/prueba/prueba.component';
     SharedModule,
     CoreModule,
     LoginModule,
-    DashboardModule
+    DashboardModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { User, UserResponse } from '../../shared/models/user.interface';
-import { Observable, catchError, map,throwError,of } from 'rxjs';
+import { Observable, catchError, map,throwError,of, BehaviorSubject } from 'rxjs';
 import { Router } from '@angular/router';
 
 
@@ -9,23 +9,38 @@ import { Router } from '@angular/router';
   providedIn: 'root',
 })
 export class AuthService {
+
+  private loggedIn$ = new BehaviorSubject<boolean>(false);
+
   constructor(private router: Router) { }
 
-
   private localStorageKey = 'currentUser';
+
+  get isLogged(): Observable<boolean>{
+    return this.loggedIn$.asObservable();
+  }
 
   login(username: string, password: string): Observable<any> {
     const user: User = { username: username, password: password };
     localStorage.setItem(this.localStorageKey, JSON.stringify(user));
     this.router.navigate(['/dashboard/']);
+    this.loggedIn$.next(true);
     return of(user);
   }
   logout(): void {
     localStorage.removeItem(this.localStorageKey);
+    this.router.navigate(['/Login/']);
+    this.loggedIn$.next(false);
   }
 
   isLoggedIn(): boolean {
-    return !!localStorage.getItem(this.localStorageKey);
+    if(localStorage.getItem(this.localStorageKey)){
+      console.log("Tiene Localstorage")
+      return true
+    }else{
+      console.log("No tiene Localstorage")
+      return false
+    }
   }
 
   getCurrentUser(): User | null {

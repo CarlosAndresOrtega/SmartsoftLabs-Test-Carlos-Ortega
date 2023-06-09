@@ -5,14 +5,13 @@ import { LoginComponent } from './components/login/login.component';
 const routes: Routes = [
   {
     path:'',
-    redirectTo:'/Login/Start',
-    pathMatch:'full'
-  },
-  {
-    path:'Start',
     component:LoginComponent,
-    // canActivate: [CanActivateUrl]
-  }
+  },
+  // {
+  //   path:'Start',
+  //   component:LoginComponent,
+  //   // canActivate: [CanActivateUrl]
+  // }
 ];
 
 @NgModule({

@@ -9,11 +9,6 @@ const routes: Routes = [
     path:'',
     component:HeaderComponent,
   },
-  // {
-  //   path:'start',
-    
-  //   // canActivate: [CanActivateUrl]
-  // }
 ];
 
 @NgModule({
