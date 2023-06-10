@@ -18,7 +18,7 @@ import { FormsModule } from '@angular/forms';
     DashboardRoutingModule,
     CommonModule,
     SharedModule,
-    FormsModule
+    FormsModule,
   ]
 })
 export class DashboardModule { }

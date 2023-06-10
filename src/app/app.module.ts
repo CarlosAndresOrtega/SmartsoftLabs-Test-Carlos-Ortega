@@ -9,11 +9,10 @@ import { LoginModule } from './modules/login/login.module';
 import { HttpClientModule } from '@angular/common/http';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
 import { PruebaComponent } from './components/prueba/prueba.component';
-
 @NgModule({
   declarations: [
     AppComponent,
-    PruebaComponent
+    PruebaComponent,
   ],
   imports: [
     BrowserModule,

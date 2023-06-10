@@ -1,8 +1,15 @@
-import { Component } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  OnInit,
+  Renderer2,
+  ViewChild,
+} from '@angular/core';
 import { States } from 'src/app/modules/shared/models/estados.interface';
 import { stateNames } from 'src/app/modules/shared/models/estados.interface';
 import { CheckDataService } from 'src/app/modules/shared/services/checkData/check-data.service';
 import * as XLSX from 'xlsx';
+import { Chart } from 'chart.js/auto';
 
 @Component({
   selector: 'app-data-component',
@@ -10,6 +17,8 @@ import * as XLSX from 'xlsx';
   styleUrls: ['./data-component.component.scss'],
 })
 export class DataComponentComponent {
+  public chart: any;
+
   ExcelData: Array<any> = [];
   convertedJson!: string;
 
@@ -24,7 +33,7 @@ export class DataComponentComponent {
     nameState: '',
   };
   MinDeaths = {
-    deaths: Infinity, // o puedes usar un número muy bajo como -Infinity
+    deaths: Infinity,
     nameState: '',
   };
   MostAffected = {
@@ -32,9 +41,45 @@ export class DataComponentComponent {
     nameState: '',
   };
 
-  constructor(private data: CheckDataService) {}
+  porcentajes: Array<string> = [];
+  labels: Array<string> = [];
 
+  constructor(private saveSvc: CheckDataService, private renderer: Renderer2) {}
+
+  ngOnInit() {
+    this.createChart();
+  }
+  createChart() {
+    console.log('entraajassasñ');
+    var ctx = this.renderer.selectRootElement('#MyChart').getContext('2d');
+    if (this.chart) {
+      this.chart.destroy();
+    }
+
+    this.chart = new Chart(ctx, {
+      type: 'pie', //this denotes tha type of chart
+      data: {
+        // values on X-Axis
+        labels: [this.labels],
+        datasets: [
+          {
+            label: 'Población total por estado',
+            data: [],
+            backgroundColor: [
+              'rgb(255, 99, 132)',
+              'rgb(54, 162, 235)',
+              'rgb(255, 205, 86)',
+            ],
+          },
+        ],
+      },
+      options: {
+        aspectRatio: 0,
+      },
+    });
+  }
   ReadExel(event: any) {
+    // this.chart.data['datasets'][0].data.splice(0, this.chart.data['datasets'][0].data.length);
     let file = event.target.files[0];
 
     let fileReader = new FileReader();
@@ -67,29 +112,40 @@ export class DataComponentComponent {
         });
       });
 
+      let total = 0;
+
       this.States.forEach((es: any) => {
         stateNames.forEach((state) => {
           if (es.hasOwnProperty(state)) {
             es[state].MortalityRate =
               (es[state].deaths / es[state].population) * 1000;
             es[state].percentagePopulation =
-              (es[state].population / this.totalPopulation) * 100;
+              Math.round((es[state].population / this.totalPopulation) * 360);
+
+            total += es[state].percentagePopulation;
+            this.chart.data['labels'].push(state);
+            this.chart.data['datasets'][0].data.push(
+              Math.round(es[state].percentagePopulation)
+            );
           }
         });
       });
 
-      this.percentageTotalDeaths = (this.totalDeaths / this.totalPopulation) * 100;
+      this.percentageTotalDeaths =
+        (this.totalDeaths / this.totalPopulation) * 360;
 
-      console.log('Porcentaje total de muertes:',this.percentageTotalDeaths);
-      console.log(this.States);
-      console.log(this.totalPopulation);
-      console.log(this.ExcelData);
 
       this.identifyState();
+      this.chart.data['labels'].splice(0, 1);
+      this.chart.data['labels'].push('PORCENTAJE TOTAL DE MUERTES');
+      this.chart.data['datasets'][0].data.push(
+        Math.round(this.percentageTotalDeaths)
+      );
+      this.saveSvc.saveData(this.States, this.MaxDeaths,this.MinDeaths, this.MostAffected, this.totalPopulation,this.totalDeaths,this.percentageTotalDeaths)
     };
   }
 
-  identifyState() {
+  identifyState():void {
     stateNames.forEach((state) => {
       this.States.forEach((data: any) => {
         if (data.hasOwnProperty(state)) {
@@ -101,13 +157,14 @@ export class DataComponentComponent {
             this.MinDeaths.deaths = data[state].deaths;
             this.MinDeaths.nameState = state;
           }
-          if (data[state].percentage > this.MostAffected.percentage) {
-            this.MostAffected.percentage = data[state].percentage;
+          if (data[state].MortalityRate > this.MostAffected.percentage) {
+            this.MostAffected.percentage = data[state].MortalityRate;
             this.MostAffected.nameState = state;
           }
         }
       });
     });
+
     console.log(this.MaxDeaths);
     console.log(this.MinDeaths);
     console.log(this.MostAffected);
