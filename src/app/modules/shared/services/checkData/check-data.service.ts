@@ -1,69 +1,111 @@
 import { Injectable } from '@angular/core';
+import {
+  MaxDeaths,
+  MinDeaths,
+  MostAffected,
+} from '../../models/data.interfaces';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class CheckDataService {
+  localStorageKey = 'DataCovid';
+  constructor() {}
 
-  localStorageKey="DataCovid"
-  constructor() { }
-
-  saveData(States:any,MaxDeaths:any,MinDeaths:any,MostAffected:any, totalPopulation:number, totalDeaths:number,percentageTotalDeaths:number):void{
+  saveData(
+    States: any,
+    MaxDeaths: any,
+    MinDeaths: any,
+    MostAffected: any,
+    totalPopulation: number,
+    totalDeaths: number,
+    percentageTotalDeaths: number,
+    labels:Array<string>,
+    percentageData:Array<number>
+  ): void {
     localStorage.setItem(this.localStorageKey, JSON.stringify(States));
-    localStorage.setItem("MaxDeaths", JSON.stringify(MaxDeaths));
-    localStorage.setItem("MinDeaths", JSON.stringify(MinDeaths));
-    localStorage.setItem("MostAffected", JSON.stringify(MostAffected));
-    localStorage.setItem("totalPopulation", JSON.stringify(totalPopulation));
-    localStorage.setItem("totalDeaths", JSON.stringify(totalDeaths));
-    localStorage.setItem("percentageTotalDeaths", JSON.stringify(percentageTotalDeaths));
+    localStorage.setItem('MaxDeaths', JSON.stringify(MaxDeaths));
+    localStorage.setItem('MinDeaths', JSON.stringify(MinDeaths));
+    localStorage.setItem('MostAffected', JSON.stringify(MostAffected));
+    localStorage.setItem('totalPopulation', JSON.stringify(totalPopulation));
+    localStorage.setItem('totalDeaths', JSON.stringify(totalDeaths));
+    localStorage.setItem(
+      'percentageTotalDeaths',
+      JSON.stringify(percentageTotalDeaths)
+    );
+    localStorage.setItem('labels', JSON.stringify(labels));
+    localStorage.setItem('percentageData', JSON.stringify(percentageData));
   }
-  getDataCovid():Array<any> | null {
+  getDataCovid(): Array<any> {
     const userString = localStorage.getItem(this.localStorageKey);
     if (userString) {
       return JSON.parse(userString);
     }
-    return null;
+    return [];
   }
-  getMaxDeaths():any | null {
-    const userString = localStorage.getItem("MaxDeaths");
+  getMaxDeaths(): MaxDeaths {
+    const userString = localStorage.getItem('MaxDeaths');
     if (userString) {
       return JSON.parse(userString);
     }
-    return null;
+    return {
+      deaths: 0,
+      nameState: '',
+    };
   }
-  getMinDeaths():any | null {
-    const userString = localStorage.getItem("MinDeaths");
+  getMinDeaths(): MinDeaths {
+    const userString = localStorage.getItem('MinDeaths');
     if (userString) {
       return JSON.parse(userString);
     }
-    return null;
+    return {
+      deaths: 0,
+      nameState: '',
+    };
   }
-  getMostAffected():any | null {
-    const userString = localStorage.getItem("MostAffected");
+  getMostAffected(): MostAffected {
+    const userString = localStorage.getItem('MostAffected');
     if (userString) {
       return JSON.parse(userString);
     }
-    return null;
+    return {
+      percentage: 0,
+      nameState: '',
+    };
   }
-  getTotalPopulation():number | null {
-    const userString = localStorage.getItem("totalPopulation");
+  getTotalPopulation(): number {
+    const userString = localStorage.getItem('totalPopulation');
     if (userString) {
       return JSON.parse(userString);
     }
-    return null;
+    return 0;
   }
-  getTotalDeaths():number | null {
-    const userString = localStorage.getItem("totalDeaths");
+  getTotalDeaths(): number {
+    const userString = localStorage.getItem('totalDeaths');
     if (userString) {
       return JSON.parse(userString);
     }
-    return null;
+    return 0;
   }
-  getPercentageTotalDeaths():number | null {
-    const userString = localStorage.getItem("percentageTotalDeaths");
+  getPercentageTotalDeaths(): number {
+    const userString = localStorage.getItem('percentageTotalDeaths');
     if (userString) {
       return JSON.parse(userString);
     }
-    return null;
+    return 0;
+  }
+  getLabels(): Array<string> {
+    const userString = localStorage.getItem('labels');
+    if (userString) {
+      return JSON.parse(userString);
+    }
+    return [];
+  }
+  getPercentageData(): Array<number> {
+    const userString = localStorage.getItem('percentageData');
+    if (userString) {
+      return JSON.parse(userString);
+    }
+    return [];
   }
 }

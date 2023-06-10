@@ -1,9 +1,6 @@
 import {
   Component,
-  ElementRef,
-  OnInit,
   Renderer2,
-  ViewChild,
 } from '@angular/core';
 import { States } from 'src/app/modules/shared/models/estados.interface';
 import { stateNames } from 'src/app/modules/shared/models/estados.interface';
@@ -41,16 +38,41 @@ export class DataComponentComponent {
     nameState: '',
   };
 
-  porcentajes: Array<string> = [];
+  activeDrop=true
+
   labels: Array<string> = [];
+  percentageData:Array<number> = [];
+
 
   constructor(private saveSvc: CheckDataService, private renderer: Renderer2) {}
 
   ngOnInit() {
-    this.createChart();
+    let value = this.saveSvc.getDataCovid();
+    if (Array.isArray(value) && value.length !== 0) {
+      this.States = this.saveSvc.getDataCovid();
+      this.MaxDeaths = this.saveSvc.getMaxDeaths();
+      this.MinDeaths = this.saveSvc.getMinDeaths();
+      this.MostAffected = this.saveSvc.getMostAffected();
+      this.totalPopulation = this.saveSvc.getTotalPopulation();
+      this.totalDeaths = this.saveSvc.getTotalDeaths();
+      this.percentageTotalDeaths = this.saveSvc.getPercentageTotalDeaths();
+      this.labels = this.saveSvc.getLabels();
+      this.percentageData=this.saveSvc.getPercentageData();
+      this.activeDrop=false
+      this.createChart();
+      this.updateChart();
+    }else{
+      this.activeDrop=true
+      this.createChart();
+    }
+  }
+  updateChart(){
+    this.chart.data['labels']=this.labels
+    this.chart.data['datasets'][0].data=this.percentageData
+    this.chart.update();
+
   }
   createChart() {
-    console.log('entraajassasñ');
     var ctx = this.renderer.selectRootElement('#MyChart').getContext('2d');
     if (this.chart) {
       this.chart.destroy();
@@ -64,12 +86,13 @@ export class DataComponentComponent {
         datasets: [
           {
             label: 'Población total por estado',
-            data: [],
+            data: [  this.percentageData],
             backgroundColor: [
               'rgb(255, 99, 132)',
               'rgb(54, 162, 235)',
               'rgb(255, 205, 86)',
             ],
+            hoverOffset: 4,
           },
         ],
       },
@@ -79,7 +102,6 @@ export class DataComponentComponent {
     });
   }
   ReadExel(event: any) {
-    // this.chart.data['datasets'][0].data.splice(0, this.chart.data['datasets'][0].data.length);
     let file = event.target.files[0];
 
     let fileReader = new FileReader();
@@ -102,7 +124,6 @@ export class DataComponentComponent {
           }
         });
       });
-
       stateNames.forEach((state) => {
         this.States.forEach((data: any) => {
           if (data.hasOwnProperty(state)) {
@@ -119,12 +140,16 @@ export class DataComponentComponent {
           if (es.hasOwnProperty(state)) {
             es[state].MortalityRate =
               (es[state].deaths / es[state].population) * 1000;
-            es[state].percentagePopulation =
-              Math.round((es[state].population / this.totalPopulation) * 360);
+            es[state].percentagePopulation = Math.round(
+              (es[state].population / this.totalPopulation) * 360
+            );
 
             total += es[state].percentagePopulation;
             this.chart.data['labels'].push(state);
             this.chart.data['datasets'][0].data.push(
+              Math.round(es[state].percentagePopulation)
+            );
+            this.percentageData.push(
               Math.round(es[state].percentagePopulation)
             );
           }
@@ -134,18 +159,32 @@ export class DataComponentComponent {
       this.percentageTotalDeaths =
         (this.totalDeaths / this.totalPopulation) * 360;
 
-
       this.identifyState();
       this.chart.data['labels'].splice(0, 1);
       this.chart.data['labels'].push('PORCENTAJE TOTAL DE MUERTES');
       this.chart.data['datasets'][0].data.push(
         Math.round(this.percentageTotalDeaths)
       );
-      this.saveSvc.saveData(this.States, this.MaxDeaths,this.MinDeaths, this.MostAffected, this.totalPopulation,this.totalDeaths,this.percentageTotalDeaths)
+      this.percentageData.push(
+        Math.round(this.percentageTotalDeaths)
+      );
+      this.chart.update();
+      this.activeDrop=false
+      this.saveSvc.saveData(
+        this.States,
+        this.MaxDeaths,
+        this.MinDeaths,
+        this.MostAffected,
+        this.totalPopulation,
+        this.totalDeaths,
+        this.percentageTotalDeaths,
+        this.chart.data['labels'],
+        this.percentageData
+      );
     };
   }
 
-  identifyState():void {
+  identifyState(): void {
     stateNames.forEach((state) => {
       this.States.forEach((data: any) => {
         if (data.hasOwnProperty(state)) {
@@ -164,9 +203,5 @@ export class DataComponentComponent {
         }
       });
     });
-
-    console.log(this.MaxDeaths);
-    console.log(this.MinDeaths);
-    console.log(this.MostAffected);
   }
 }

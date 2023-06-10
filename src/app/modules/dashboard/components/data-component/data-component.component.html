@@ -1,4 +1,4 @@
-<input type="file" (change)="ReadExel($event)">
+<input *ngIf="activeDrop" type="file" (change)="ReadExel($event)">
 <div>
     Estado con mayor numero de muertes {{MaxDeaths.nameState}}
 </div>
@@ -8,6 +8,7 @@
 
 
 <div style="width: 600px; height: 600px;">
-    <canvas  id="MyChart" >{{ chart }}</canvas>
+    <canvas  id="MyChart">{{ chart }}</canvas>
 
 </div>
+
