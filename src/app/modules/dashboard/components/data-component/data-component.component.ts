@@ -71,7 +71,7 @@ export class DataComponentComponent {
     }
 
     this.chart = new Chart(ctx, {
-      type: 'pie', //this denotes tha type of chart
+      type: 'pie', 
       data: { 
         labels: [this.labels],
         datasets: [
@@ -159,12 +159,10 @@ export class DataComponentComponent {
       this.identifyState();
       this.chart.data['labels'].splice(0, 1);
       this.chart.data['labels'].unshift('PORCENTAJE TOTAL DE MUERTES');
-      console.log( this.chart.data['datasets'][0].data)
       this.chart.data['datasets'][0].data.splice(0, 1);
       this.chart.data['datasets'][0].data.unshift(
         Math.round(this.percentageTotalDeaths)
       );
-      console.log( this.chart.data['datasets'][0].data)
       this.percentageData.unshift(Math.round(this.percentageTotalDeaths));
 
       

@@ -1,5 +1,4 @@
 <div class="container">
-    <!-- <input *ngIf="activeDrop" type="file" (change)="ReadExel($event)"> -->
     <div *ngIf="activeDrop"class="formContainer">
         <form class="formInput">
             <input type="file" multiple (change)="ReadExel($event)">
