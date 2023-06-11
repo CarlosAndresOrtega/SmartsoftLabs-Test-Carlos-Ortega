@@ -19,7 +19,6 @@
     "@angular/platform-browser-dynamic": "^16.0.0",
     "@angular/router": "^16.0.0",
     "chart.js": "^4.3.0",
-    "chartjs-plugin-labels": "^1.1.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "xlsx": "^0.18.5",
