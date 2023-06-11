@@ -79,9 +79,10 @@ export class DataComponentComponent {
             label: 'Población total por estado',
             data: [this.percentageData],
             backgroundColor: [
-              'rgb(255, 99, 132)',
-              'rgb(54, 162, 235)',
-              'rgb(255, 205, 86)',
+              '#FEDCBA',
+              '#B9CDEF',
+              '#ABDEF0',
+              '#75ADC9'
             ],
             hoverBorderColor:'#000',
             
