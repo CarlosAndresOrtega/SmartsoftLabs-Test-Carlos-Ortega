@@ -1,12 +1,10 @@
-import {
-  Component,
-  Renderer2,
-} from '@angular/core';
+import { Component, Renderer2 } from '@angular/core';
 import { States } from 'src/app/modules/shared/models/estados.interface';
 import { stateNames } from 'src/app/modules/shared/models/estados.interface';
 import { CheckDataService } from 'src/app/modules/shared/services/checkData/check-data.service';
 import * as XLSX from 'xlsx';
 import { Chart } from 'chart.js/auto';
+
 
 @Component({
   selector: 'app-data-component',
@@ -15,6 +13,7 @@ import { Chart } from 'chart.js/auto';
 })
 export class DataComponentComponent {
   public chart: any;
+
 
   ExcelData: Array<any> = [];
   convertedJson!: string;
@@ -28,49 +27,42 @@ export class DataComponentComponent {
   MaxDeaths = {
     deaths: 0,
     nameState: '',
+    population:0
   };
   MinDeaths = {
     deaths: Infinity,
     nameState: '',
+    population:0
   };
   MostAffected = {
     percentage: 0,
     nameState: '',
+    population:0
   };
 
-  activeDrop=true
+  activeDrop = true;
 
   labels: Array<string> = [];
-  percentageData:Array<number> = [];
-
+  percentageData: Array<number> = [];
 
   constructor(private saveSvc: CheckDataService, private renderer: Renderer2) {}
 
   ngOnInit() {
     let value = this.saveSvc.getDataCovid();
     if (Array.isArray(value) && value.length !== 0) {
-      this.States = this.saveSvc.getDataCovid();
-      this.MaxDeaths = this.saveSvc.getMaxDeaths();
-      this.MinDeaths = this.saveSvc.getMinDeaths();
-      this.MostAffected = this.saveSvc.getMostAffected();
-      this.totalPopulation = this.saveSvc.getTotalPopulation();
-      this.totalDeaths = this.saveSvc.getTotalDeaths();
-      this.percentageTotalDeaths = this.saveSvc.getPercentageTotalDeaths();
-      this.labels = this.saveSvc.getLabels();
-      this.percentageData=this.saveSvc.getPercentageData();
-      this.activeDrop=false
+      this.getData();
+      this.activeDrop = false;
       this.createChart();
       this.updateChart();
-    }else{
-      this.activeDrop=true
+    } else {
+      this.activeDrop = true;
       this.createChart();
     }
   }
-  updateChart(){
-    this.chart.data['labels']=this.labels
-    this.chart.data['datasets'][0].data=this.percentageData
+  updateChart() {
+    this.chart.data['labels'] = this.labels;
+    this.chart.data['datasets'][0].data = this.percentageData;
     this.chart.update();
-
   }
   createChart() {
     var ctx = this.renderer.selectRootElement('#MyChart').getContext('2d');
@@ -80,24 +72,29 @@ export class DataComponentComponent {
 
     this.chart = new Chart(ctx, {
       type: 'pie', //this denotes tha type of chart
-      data: {
-        // values on X-Axis
+      data: { 
         labels: [this.labels],
         datasets: [
           {
             label: 'Población total por estado',
-            data: [  this.percentageData],
+            data: [this.percentageData],
             backgroundColor: [
               'rgb(255, 99, 132)',
               'rgb(54, 162, 235)',
               'rgb(255, 205, 86)',
             ],
-            hoverOffset: 4,
+            hoverBorderColor:'#000',
+            
           },
         ],
       },
       options: {
-        aspectRatio: 0,
+        plugins: {
+          title: {
+              display: true,
+              text: 'Porcentaje total de muertes vs Población total por estado.',
+          }
+      }
       },
     });
   }
@@ -161,15 +158,18 @@ export class DataComponentComponent {
 
       this.identifyState();
       this.chart.data['labels'].splice(0, 1);
-      this.chart.data['labels'].push('PORCENTAJE TOTAL DE MUERTES');
-      this.chart.data['datasets'][0].data.push(
+      this.chart.data['labels'].unshift('PORCENTAJE TOTAL DE MUERTES');
+      console.log( this.chart.data['datasets'][0].data)
+      this.chart.data['datasets'][0].data.splice(0, 1);
+      this.chart.data['datasets'][0].data.unshift(
         Math.round(this.percentageTotalDeaths)
       );
-      this.percentageData.push(
-        Math.round(this.percentageTotalDeaths)
-      );
+      console.log( this.chart.data['datasets'][0].data)
+      this.percentageData.unshift(Math.round(this.percentageTotalDeaths));
+
+      
       this.chart.update();
-      this.activeDrop=false
+      this.activeDrop = false;
       this.saveSvc.saveData(
         this.States,
         this.MaxDeaths,
@@ -189,19 +189,42 @@ export class DataComponentComponent {
       this.States.forEach((data: any) => {
         if (data.hasOwnProperty(state)) {
           if (data[state].deaths > this.MaxDeaths.deaths) {
-            this.MaxDeaths.deaths = data[state].deaths;
-            this.MaxDeaths.nameState = state;
+            this.MaxDeaths = {
+              deaths: data[state].deaths,
+              nameState: state,
+              population: data[state].population
+            };
           }
           if (data[state].deaths < this.MinDeaths.deaths) {
-            this.MinDeaths.deaths = data[state].deaths;
-            this.MinDeaths.nameState = state;
+            this.MinDeaths = {
+              deaths: data[state].deaths,
+              nameState: state,
+              population: data[state].population
+            };
+
           }
           if (data[state].MortalityRate > this.MostAffected.percentage) {
-            this.MostAffected.percentage = data[state].MortalityRate;
-            this.MostAffected.nameState = state;
+            this.MostAffected = {
+              percentage: data[state].MortalityRate.toFixed(2),
+              nameState: state,
+              population: data[state].population
+            };
+
           }
         }
       });
     });
+  }
+
+  getData(): void {
+    this.States = this.saveSvc.getDataCovid();
+    this.MaxDeaths = this.saveSvc.getMaxDeaths();
+    this.MinDeaths = this.saveSvc.getMinDeaths();
+    this.MostAffected = this.saveSvc.getMostAffected();
+    this.totalPopulation = this.saveSvc.getTotalPopulation();
+    this.totalDeaths = this.saveSvc.getTotalDeaths();
+    this.percentageTotalDeaths = this.saveSvc.getPercentageTotalDeaths();
+    this.labels = this.saveSvc.getLabels();
+    this.percentageData = this.saveSvc.getPercentageData();
   }
 }

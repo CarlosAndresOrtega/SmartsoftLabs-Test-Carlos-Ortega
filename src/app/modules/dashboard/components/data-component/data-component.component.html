@@ -1,14 +1,52 @@
-<input *ngIf="activeDrop" type="file" (change)="ReadExel($event)">
-<div>
-    Estado con mayor numero de muertes {{MaxDeaths.nameState}}
+<div class="container">
+    <!-- <input *ngIf="activeDrop" type="file" (change)="ReadExel($event)"> -->
+    <div *ngIf="activeDrop"class="formContainer">
+        <form class="formInput">
+            <input type="file" multiple (change)="ReadExel($event)">
+            <p>Subir Archivo</p>
+        </form>
+    </div>
+
+    <div class="grid" *ngIf="!activeDrop">
+       <div class="firstColumn">
+            <div class="text">
+                Estado con mayor numero de muertes: {{MaxDeaths.nameState}}
+            </div>
+            <img src='https://www.thoughtco.com/thmb/tfjtL8rhGxHCuCkwNFRbUOczKio=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/GettyImages-869041446-5c8b237746e0fb000146acda.jpg'
+                width="400" height="300" alt=''>
+        </div>
+
+        <p>El estado de {{MaxDeaths.nameState}}, fue aquel que mayor número de muertes acumulo por covid-19. Siendo un total de {{MaxDeaths.deaths}}.
+        Esto pudo ser debido a su gran cantidad de población, la cual es de {{MaxDeaths.population}} habitantes.
+        </p>
+
+        <div class="firstColumn">
+            <div class="text">
+                Estado con menor numero de muertes: {{MinDeaths.nameState}}
+            </div>
+
+            <img src='https://viajes.nationalgeographic.com.es/medio/2019/10/25/montpellier_c8337a7b_1254x837.jpg'
+                width="400" height="300" alt=''>
+        </div>
+
+        <p>El estado de {{MinDeaths.nameState}}, fue aquel que menor número de muertes acumulo por covid-19. Siendo un total de {{MinDeaths.deaths}}.
+            Esto pudo ser debido a su poca cantidad de población, la cual es de {{MinDeaths.population}} habitantes. Adémas que es un estado bastante alejado.</p>
+
+        <div class="firstColumn">
+            <div class="text">
+                Estado mas afectado: {{MostAffected.nameState}}
+            </div>
+            <img src='https://nationaltoday.com/wp-content/uploads/2022/09/4568159-min-1200x834.jpg'
+                width="400" height="300" alt=''>
+        </div>
+
+        <p>El estado mas afectado fue {{MostAffected.nameState}}, ya que calculando la tasa de mortalidad de todos los estados, fue aquel que obtuvo una mayor tasa de mortalidad de {{MostAffected.percentage}}%.
+        Esto pudo ser calculado gracias a la formula (#Defunciones/Poblacion media)*1000
+        </p>
+    </div>
+
+
+    <div class="chartjs">
+        <canvas id="MyChart">{{ chart }}</canvas>
+    </div>
 </div>
-<div>
-    Estado con menor numero de muertes {{MinDeaths.nameState}}
-</div>
-
-
-<div style="width: 600px; height: 600px;">
-    <canvas  id="MyChart">{{ chart }}</canvas>
-
-</div>
-

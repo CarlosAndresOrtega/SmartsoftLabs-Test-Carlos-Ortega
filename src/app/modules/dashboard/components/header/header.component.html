@@ -1,5 +1,14 @@
-<h1>Jockic</h1>
-<header>
-    <button (click)="Logout()">Logout</button>
-</header>
+
+<section class="navigation">
+    <div class="nav-container">
+        <div class="brand">
+            <a>Leemos tu Archivo </a>
+        </div>
+        <nav>
+            <ul class="nav-list">
+                <li><a (click)="Logout()">Salir</a></li>
+            </ul>
+        </nav>
+    </div>
+</section>
 <app-data-component></app-data-component>

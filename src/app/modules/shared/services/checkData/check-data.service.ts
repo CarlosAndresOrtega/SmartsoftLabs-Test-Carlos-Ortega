@@ -51,6 +51,7 @@ export class CheckDataService {
     return {
       deaths: 0,
       nameState: '',
+      population:0
     };
   }
   getMinDeaths(): MinDeaths {
@@ -61,6 +62,7 @@ export class CheckDataService {
     return {
       deaths: 0,
       nameState: '',
+      population:0
     };
   }
   getMostAffected(): MostAffected {
@@ -71,6 +73,7 @@ export class CheckDataService {
     return {
       percentage: 0,
       nameState: '',
+      population:0
     };
   }
   getTotalPopulation(): number {

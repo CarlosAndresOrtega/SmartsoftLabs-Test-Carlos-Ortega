@@ -1,36 +1,18 @@
 <div class="container">
-	<div class="screen">
-		<div class="screen__content">
-			<form class="login" (ngSubmit)="onSubmit()">
-				<div class="login__field">
-					<i class="login__icon fas fa-user"></i>
-					<input type="text" class="login__input" id="username" name="username"
-						placeholder="User name / Email" [(ngModel)]="username">
-				</div>
-				<div class="login__field">
-					<i class="login__icon fas fa-lock"></i>
-					<input type="password" class="login__input" id="password" name="password" placeholder="Password"
-						[(ngModel)]="password">
-				</div>
-				<button class="button login__submit" type="submit">
-					<span class="button__text">Log In Now</span>
-					<i class="button__icon fas fa-chevron-right"></i>
-				</button>
+	<section class='login' id='login'>
+		<div class='head'>
+			<h1 class='company'>Leemos tu Archivo</h1>
+		</div>
+		<p class='msg'>Ingresa tu usuario</p>
+		<div class='form'>
+			<form (ngSubmit)="onSubmit()">
+				<input type="text" placeholder='Username' class='text' id="username" name="username" required
+					[(ngModel)]="username"><br>
+				<input type="password" placeholder='••••••••••••••' class='password' id="password" name="password"
+					[(ngModel)]="password" required><br>
+				<button href="#" class='btn-login' id='do-login' type="submit">Login</button>
 			</form>
-			<div class="social-login">
-				<h3>log in via</h3>
-				<div class="social-icons">
-					<a href="#" class="social-login__icon fab fa-instagram"></a>
-					<a href="#" class="social-login__icon fab fa-facebook"></a>
-					<a href="#" class="social-login__icon fab fa-twitter"></a>
-				</div>
-			</div>
 		</div>
-		<div class="screen__background">
-			<span class="screen__background__shape screen__background__shape4"></span>
-			<span class="screen__background__shape screen__background__shape3"></span>
-			<span class="screen__background__shape screen__background__shape2"></span>
-			<span class="screen__background__shape screen__background__shape1"></span>
-		</div>
-	</div>
+	</section>
 </div>
+
